@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = "http://alb-tweetapp-683263207.us-east-2.elb.amazonaws.com/api/v1.0/tweets/";
+const API_URL = "http://tweetapp-demo-alb-398507805.us-east-1.elb.amazonaws.com/api/v1.0/tweets/";
 class TweetService {
   getAllTweet() {
     return axios.get(API_URL + 'all');
