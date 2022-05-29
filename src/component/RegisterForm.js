@@ -252,6 +252,11 @@ export default class Register extends Component {
                 <div className="form-group">
                   <button className="btn btn-dark btn-block btn-lg mt-3">Sign Up</button>
                 </div>
+                <div style={{marginTop:'5px'}}className="form-group">
+                <p className="SignUp text-right">
+                    Already have account?<a href="/">Login Here</a>
+                </p>
+                </div>
               </div>
             )}
             {this.state.message && (

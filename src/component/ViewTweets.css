@@ -2,7 +2,8 @@
     margin-top: 5px;
     float:right;
     width: 930px;
-    margin-left:10px;  
+    margin-left:10px;
+    border-radius: 30px;  
 }
 
 .table {
@@ -17,5 +18,9 @@
 .replybox{
     width: 280px;
     height: 40px;
+}
+
+.myTweetbody tr{
+    border-radius: 20px;
 }
 

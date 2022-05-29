@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
 import "./navbar.css";
-import TwitterIcon from "@material-ui/icons/Twitter";
-import { AiFillHome, AiOutlineLogout } from "react-icons/ai";
-import { HiViewList } from "react-icons/hi"
+import { AiFillHome } from "react-icons/ai";
 import { NavLink } from "react-router-dom";
+import { IoLogOut } from 'react-icons/io5'
 
 
 const Navbar = () => {
@@ -27,7 +26,7 @@ const Navbar = () => {
     x.push('scrolled');
   }
   return (
-    <header className={x.join(" ")}>
+    <div className="navbar">
       <div class="navvcontainer">
         <div id="navst-box">
           <h1>Tweet App</h1>
@@ -40,25 +39,23 @@ const Navbar = () => {
           <nav className="navigation">
             <ul>
               <li>
-                <NavLink to="/viewMyTweet">View My Tweet</NavLink>
+                <NavLink to="/home"><AiFillHome />Home</NavLink>
+              </li>
+              <li>
+                <NavLink to="/viewMyTweet">My Tweets</NavLink>
               </li>
 
               <li>
                 <NavLink to="/AllUsers">View Users</NavLink>
               </li>
-
               <li>
-                <NavLink to="/home"><AiFillHome />Home</NavLink>
-              </li>
-
-              <li>
-                <NavLink to="/logout"><AiOutlineLogout />Logout</NavLink>
+                <NavLink to="/logout"><IoLogOut />Logout</NavLink>
               </li>
             </ul>
           </nav>
         </div>
       </div>
-    </header>
+    </div>
   )
 };
 

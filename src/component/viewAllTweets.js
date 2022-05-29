@@ -6,7 +6,7 @@ import Button from 'react-bootstrap/Button';
 import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import AuthService from "../services/auth.service";
-import {withRouter} from "react-router-dom";
+import { withRouter } from "react-router-dom";
 
 class ViewMytweetComponent extends Component {
 
@@ -23,29 +23,29 @@ class ViewMytweetComponent extends Component {
 
     }
 
-    updateTweet(Tweetloginid,uuid){
-        const {user} = this.state;
+    updateTweet(Tweetloginid, uuid) {
+        const { user } = this.state;
         var loginId = user.userId;
-        console.log(Tweetloginid,loginId);
-        if(Tweetloginid === loginId){
-        this.props.history.push(`/update/${uuid}`);
-        window.location.reload();
+        console.log(Tweetloginid, loginId);
+        if (Tweetloginid === loginId) {
+            this.props.history.push(`/update/${uuid}`);
+            window.location.reload();
         }
-        else{
+        else {
             alert(" U Cannot Update Others Tweet...Press  OK and Continue Tweet..Thank You!!");
         }
     }
 
-    replyViewTweet(Tweetloginid,Tweetuuid){
+    replyViewTweet(Tweetloginid, Tweetuuid) {
         this.props.history.push(`/view/${Tweetuuid}/${Tweetloginid}`);
         window.location.reload();
-    
+
     }
 
 
 
     likeTweet(uuid) {
-        const {user} = this.state;
+        const { user } = this.state;
         var loginId = user.userId;
         TweetDataService.likeATweet(loginId, uuid).then(
             () => {
@@ -56,17 +56,17 @@ class ViewMytweetComponent extends Component {
     }
 
     replyTweet(uuid) {
-        const {user} = this.state;
+        const { user } = this.state;
         var loginId = user.userId;
         TweetDataService.replyATweet(loginId, uuid, this.state.reply).then(
             () => {
-              
+
                 window.location.reload();
             });
     }
 
-    deleteTweet(Tweetloginid,uuid) {
-        const {user} = this.state;
+    deleteTweet(Tweetloginid, uuid) {
+        const { user } = this.state;
         var loginId = user.userId;
         // console.log(Tweetloginid);
         // console.log("UUID", uuid);
@@ -78,7 +78,7 @@ class ViewMytweetComponent extends Component {
                 });
             });
         }
-        else{
+        else {
             alert(" U Cannot Delete Others Tweet...Press  OK and Continue Tweet..Thank You!!");
         }
     }
@@ -91,45 +91,34 @@ class ViewMytweetComponent extends Component {
 
     onChangeReply(e) {
         this.setState({
-          reply:e.target.value
+            reply: e.target.value
         });
     }
 
 
     render() {
         return (
-
-            <div className="row">
-                <table className="table table-striped ">
-                    <tbody className="myTweetbody">
-                        {
-                            this.state.Tweet.map(
-                                Tweet =>
-                                    <tr key={Tweet.uuid}>
-                                        <td> <strong>@{Tweet.userId}</strong> </td>
-                                        <td> {Tweet.tweet} <br></br><Button onClick={() => this.likeTweet(Tweet.tweetId)} variant="outline-info"><AiFillLike /></Button> {Tweet.like}<br></br><AiOutlineFieldTime /> {Tweet.timeStamp}</td>
-                                        
-                                        <td>
-                                            <div>
-                                                <Form>
-                                                    <Input type="textbox" className="replybox" name={Tweet.uuid} placeholder="commnet here.." onChange={this.onChangeReply} value={this.state[Tweet.uuid] || ""}></Input>
-                                                    <Button onClick={() => this.replyTweet(Tweet.tweetId)}>Reply</Button>
-                                                </Form>
-                                            </div>
-                                            
-                                        </td>
-                                        <td>
-                                            <button onClick={ () => this.updateTweet(Tweet.userId,Tweet.tweetId)} className="btn btn-secondary">Update </button>
-                                            <button style={{ marginLeft: "10px" }} onClick= {() => this.deleteTweet(Tweet.userId,Tweet.tweetId)} className="btn btn-danger">Delete </button>
-                                            <button style={{ marginLeft: "10px" }} onClick={ () => this.replyViewTweet(Tweet.userId,Tweet.tweetId)} className="btn btn-info">View Replies </button>
-                                        </td>
-                                    </tr>
-                            )
-                        }
-
-                    </tbody>
-                </table>
-
+            <div>
+                <div  class="card">
+                    {
+                this.state.Tweet.map(
+                    Tweet =>
+                    <div key={Tweet.uuid} class="card-body">
+                        <h5 class="card-title">@{Tweet.userId}</h5>
+                        <p class="card-text">{Tweet.tweet}</p>
+                        <Form style={{ marginBottom: "5px" }}>
+                            <Input type="textbox" className="replybox" name={Tweet.uuid}  placeholder="commnet here.." onChange={this.onChangeReply} value={this.state[Tweet.uuid] || ""}></Input>
+                            <Button onClick={() => this.likeTweet(Tweet.tweetId)} variant="outline-info"><AiFillLike /></Button>&nbsp;&nbsp;&nbsp;
+                            {Tweet.like}<br></br><AiOutlineFieldTime /> {Tweet.timeStamp} <br/>
+                            <Button onClick={() => this.replyTweet(Tweet.tweetId)}>Reply</Button>
+                        </Form>
+                        <button onClick={ () => this.updateTweet(Tweet.userId,Tweet.tweetId)} class="btn btn-primary">Update</button>
+                        <button style={{ marginLeft: "10px" }} onClick= {() => this.deleteTweet(Tweet.userId,Tweet.tweetId)} class="btn btn-primary">Delete</button>
+                        <button style={{ marginLeft: "10px" }} onClick={ () => this.replyViewTweet(Tweet.userId,Tweet.tweetId)} class="btn btn-primary">View Comment</button>
+                    </div>
+                )
+            }
+                </div>
             </div>
         )
     }

@@ -28,7 +28,7 @@ li {
 }
 
 .container {
-  background-color: #1b9bf0;
+  /* background-color: gainsboro; */
   background-size: cover;
   background-position: inherit;
   padding-top:20px;
@@ -42,7 +42,7 @@ li {
   background-color:white;
   border:box-shadow;
 }
-#nd-box {
+/* #nd-box {
   float:left;
   width:950px;
   display: flex;
@@ -51,8 +51,9 @@ li {
   border:box-shadow;
   border: 2px solid #cccccc;
   margin-left:40px;
+  margin-top: 20px;
 
-}
+} */
 #rd-box {
   float:right;
   width: 250px;

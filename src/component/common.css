@@ -8,12 +8,14 @@
 }
 
 .registerForm{
+  border: 2px solid;
   float: left;
   border:box-shadow;
   width:280px;
-  height:360px;
+  height:200vh;
   margin-top: 200px;
   margin-left: 280px;
+  padding: 10px;
 }
 
 .forgotForm{

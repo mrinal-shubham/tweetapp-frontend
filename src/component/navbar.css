@@ -41,6 +41,9 @@
   padding: .5em;
   cursor: pointer;
   font-size: 20px;
+  border-radius: 20px;
+  border-radius: 20px;
+  border: 5px solid;
 }
 
 .navigation li a{
@@ -55,20 +58,18 @@
 }
 
 
-.navvcontainer {
+/* .navvcontainer {
   background-position: inherit;
   padding-top:20px;
   padding-left:10px;
   padding-right:10px;
-}
+} */
 #navst-box {
   float:left;
   width:200px;
   height:40px;
   border:box-shadow;
-  margin-left: 30px;
-  margin-bottom: 4px;
-  margin-top: 3px;
+  margin: 40px 4px 4px 110px;
 }
 #navnd-box {
   float:left;
@@ -79,7 +80,7 @@
   margin-bottom: 4px;
   margin-top: 2px;
 }
-#navrd-box {
+/* #navrd-box {
   float:right;
   width: 540px;
   height:40px;
@@ -88,4 +89,4 @@
   margin-bottom: 4px;
   margin-top: 3px;
   
-}
+} */
