@@ -66,6 +66,7 @@ jobs:
           echo "QA Approval"
 
   deploy:
+    if: ${{ inputs.promoteToTst || inputs.environment == 'tst' }}
     needs: [qa-approval]
     runs-on: ubuntu-latest
     steps:
