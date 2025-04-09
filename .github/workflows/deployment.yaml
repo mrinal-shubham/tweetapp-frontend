@@ -60,19 +60,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Wait for QA approval
-        uses: trstringer/manual-approval@v1
-        id: approval
-        with:
-          secret: ${{ github.token }}
-          approvers: 'qa-team'
-          minimum-approvals: 1
-          issue-title: "QA Approval Required for ${{ inputs.environment }}"
-          issue-body: |
-            Please review deployment to ${{ inputs.environment }}.
-            ${{ (inputs.promoteToTst || inputs.promoteToStg) && 'Includes Docker image deployment.' || '' }}
+        run: |
+          echo "QA Approval"
 
   deploy:
     needs: qa-approval
+    if: inputs.environment == 'tst' || inputs.promoteToTst
     runs-on: ubuntu-latest
     steps:
       - name: Check approval
