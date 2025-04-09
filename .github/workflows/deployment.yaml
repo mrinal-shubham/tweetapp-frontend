@@ -58,13 +58,15 @@ jobs:
     if: ${{(inputs.promoteToTst || inputs.environment == 'tst') && always() }}
     needs: [build, docker-build-push]
     runs-on: ubuntu-latest
+    environment:
+      name: QA
     steps:
       - name: Wait for QA approval
         run: |
           echo "QA Approval"
 
   deploy:
-    needs: qa-approval
+    needs: [qa-approval]
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to ${{ inputs.environment }}
