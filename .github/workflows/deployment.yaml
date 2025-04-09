@@ -68,10 +68,6 @@ jobs:
     if: ${{inputs.environment == 'tst' || inputs.promoteToTst}}
     runs-on: ubuntu-latest
     steps:
-      - name: Check approval
-        if: steps.approval.outputs.approved != 'true'
-        run: exit 1
-      
       - name: Deploy to ${{ inputs.environment }}
         run: |
           echo "Deploying ${{ env.appName }} to ${{ inputs.environment }}"
