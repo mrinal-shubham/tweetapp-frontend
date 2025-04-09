@@ -65,7 +65,6 @@ jobs:
 
   deploy:
     needs: qa-approval
-    if: ${{inputs.environment == 'tst'}}
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to ${{ inputs.environment }}
