@@ -65,7 +65,7 @@ jobs:
 
   deploy:
     needs: qa-approval
-    if: inputs.environment == 'tst' || inputs.promoteToTst
+    if: ${{inputs.environment == 'tst' || inputs.promoteToTst}}
     runs-on: ubuntu-latest
     steps:
       - name: Check approval
