@@ -1,0 +1,85 @@
+name: Deployment Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Select the environment to deploy"
+        required: true
+        default: "dev"
+        type: choice
+        options:
+          - dev
+          - tst
+          - stg
+          - prod
+      promoteToTst:
+        description: "Promote to Test"
+        required: false
+        default: false
+        type: boolean
+      promoteToStg:
+        description: "Promote to Stage"
+        required: false
+        default: false
+        type: boolean
+
+env:
+  appName: "occt"
+  acrName: "occtnpacr"
+  service_name: "occt-healthcheck"
+  ENVIRONMENT: "${{ inputs.environment || 'dev' }}"
+  BUILD_NUMBER: "${{ github.run_number }}"
+  NOTIFICATIONS_EMAIL_RECIPIENT: "mrial_subchangeptum.com"
+  NPM_REGISTRY: "${{ vars.NPM_REGISTRY }}"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      build_status: ${{ steps.build.outputs.status }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+  docker-build-push:
+    needs: build
+    if: ${{ inputs.promoteToTst || inputs.promoteToStg }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+  qa-approval:
+    if: ${{(inputs.promoteToTst || inputs.environment == 'tst') && always() }}
+    needs: [build, docker-build-push]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for QA approval
+        uses: trstringer/manual-approval@v1
+        id: approval
+        with:
+          secret: ${{ github.token }}
+          approvers: 'qa-team'
+          minimum-approvals: 1
+          issue-title: "QA Approval Required for ${{ inputs.environment }}"
+          issue-body: |
+            Please review deployment to ${{ inputs.environment }}.
+            ${{ (inputs.promoteToTst || inputs.promoteToStg) && 'Includes Docker image deployment.' || '' }}
+
+  deploy:
+    needs: qa-approval
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check approval
+        if: steps.approval.outputs.approved != 'true'
+        run: exit 1
+      
+      - name: Deploy to ${{ inputs.environment }}
+        run: |
+          echo "Deploying ${{ env.appName }} to ${{ inputs.environment }}"
+          ${{ (inputs.promoteToTst || inputs.promoteToStg) && 'echo "Using Docker image: ${{ env.acrName }}.azurecr.io/${{ env.appName }}:${{ env.BUILD_NUMBER }}"' || '' }}
