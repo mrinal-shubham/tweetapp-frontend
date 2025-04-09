@@ -65,10 +65,9 @@ jobs:
 
   deploy:
     needs: qa-approval
-    if: ${{inputs.environment == 'tst' || inputs.promoteToTst}}
+    if: ${{inputs.environment == 'tst'}}
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to ${{ inputs.environment }}
         run: |
           echo "Deploying ${{ env.appName }} to ${{ inputs.environment }}"
-          ${{ (inputs.promoteToTst || inputs.promoteToStg) && 'echo "Using Docker image: ${{ env.acrName }}.azurecr.io/${{ env.appName }}:${{ env.BUILD_NUMBER }}"' || '' }}
