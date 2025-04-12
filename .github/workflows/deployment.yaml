@@ -32,6 +32,11 @@ env:
   BUILD_NUMBER: "${{ github.run_number }}"
   NOTIFICATIONS_EMAIL_RECIPIENT: "mrial_subchangeptum.com"
   NPM_REGISTRY: "${{ vars.NPM_REGISTRY }}"
+  envVarMap:
+  dev: "np"
+  tst: "np"
+  stg: "prod"
+  prd: "prod"
 
 jobs:
   build:
@@ -46,6 +51,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
+
+      - name: Print Value
+        run:
+          echo "Value: ${{env.envVarMap.dev}}"
+          echo "Value: ${{env.envVarMap.tst}}"
+          echo "Value: ${{env.envVarMap.stg}}"
+          echo "Value: ${{env.envVarMap.prd}}"
 
   docker-build-push:
     needs: build
