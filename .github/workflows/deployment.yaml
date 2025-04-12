@@ -53,7 +53,7 @@ jobs:
           node-version: '18'
 
       - name: Print Value
-        run:
+        run: |
           echo "Value: ${{env.envVarMap.dev}}"
           echo "Value: ${{env.envVarMap.tst}}"
           echo "Value: ${{env.envVarMap.stg}}"
