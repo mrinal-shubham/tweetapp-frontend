@@ -52,12 +52,25 @@ jobs:
         with:
           node-version: '18'
 
+      - name: Map environment tags to env variables
+        id: map_envs
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fromTag = '${{ inputs.environment }}'.toLowerCase();
+            //const toTag = '${{ inputs.toTag }}'.toLowerCase();
+              
+            // Map tags to either 'np' or 'prod'
+            const fromEnv = ['dev', 'tst'].includes(fromTag) ? 'np' : 'prod';
+            //const toEnv = ['dev', 'tst'].includes(toTag) ? 'np' : 'prod';
+              
+            // Export as environment variables
+            core.exportVariable('FROM_ENV', fromEnv);
+            //core.exportVariable('TO_ENV', toEnv);
+
       - name: Print Value
         run: |
-          echo "Value: ${envVarMap[$ENVIRONMENT]}"
-          echo "Value: ${envVarMap["tst"]}"
-          echo "Value: ${{env.envVarMap.stg}}"
-          echo "Value: ${{env.envVarMap.prd}}"
+          echo "Value: ${FROM_ENV}"
 
   docker-build-push:
     needs: build
