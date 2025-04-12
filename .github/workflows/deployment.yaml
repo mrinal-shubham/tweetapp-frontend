@@ -54,8 +54,8 @@ jobs:
 
       - name: Print Value
         run: |
-          echo "Value: ${{env.envVarMap.dev}}"
-          echo "Value: ${{env.envVarMap.tst}}"
+          echo "Value: ${envVarMap[$ENVIRONMENT]}"
+          echo "Value: ${envVarMap["tst"]}"
           echo "Value: ${{env.envVarMap.stg}}"
           echo "Value: ${{env.envVarMap.prd}}"
 
