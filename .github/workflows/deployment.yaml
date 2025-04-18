@@ -123,13 +123,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Success handler
-        if: ${{failure() && cancelled()}}
+        if: ${{ !failure() && !cancelled() }}
         run: |
           echo "All jobs completed successfully"
           # Add success actions here
 
       - name: Failure handler
-        if: failure() || cancelled()
+        if: ${{ failure() || cancelled() }}
         run: |
           echo "Pipeline failed"
           # Add failure actions here
