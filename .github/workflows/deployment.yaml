@@ -99,20 +99,37 @@ jobs:
         run: |
           echo "Deploying ${{ env.appName }} to ${{ inputs.environment }}"
 
-  post-action-success:
-    needs: [build, docker-build-push,qa-approval,deploy]
-    if: ${{always() && !failure() && !cancelled()}}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Print Value
-        run: |
-          echo "Success Triggered"
+  # post-action-success:
+  #   needs: [build, docker-build-push,qa-approval,deploy]
+  #   if: ${{always() && !failure() && !cancelled()}}
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Print Value
+  #       run: |
+  #         echo "Success Triggered"
 
-  post-action-failure:
-    needs: [build, docker-build-push,qa-approval,deploy]
-    if: ${{(failure() || cancelled()) && always()}}
+  # post-action-failure:
+  #   needs: [build, docker-build-push,qa-approval,deploy]
+  #   if: ${{(failure() || cancelled()) && always()}}
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Print Value
+  #       run: |
+  #         echo "Failure Triggered"
+
+  post-action:
+    needs: [build, docker-build-push, qa-approval, deploy]
+    if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Print Value
+      - name: Success handler
+        if: ${{failure() && cancelled()}}
         run: |
-          echo "Failure Triggered"
+          echo "All jobs completed successfully"
+          # Add success actions here
+
+      - name: Failure handler
+        if: failure() || cancelled()
+        run: |
+          echo "Pipeline failed"
+          # Add failure actions here
