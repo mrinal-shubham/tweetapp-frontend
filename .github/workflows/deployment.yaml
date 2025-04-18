@@ -98,3 +98,21 @@ jobs:
       - name: Deploy to ${{ inputs.environment }}
         run: |
           echo "Deploying ${{ env.appName }} to ${{ inputs.environment }}"
+
+  post-action-success:
+    needs: [build, docker-build-push,qa-approval,deploy]
+    if: ${{success() && always()}}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Value
+        run: |
+          echo "Success Triggered"
+
+  post-action-failure:
+    needs: [build, docker-build-push,qa-approval,deploy]
+    if: ${{(failure() || cancelled()) && always()}}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Value
+        run: |
+          echo "Failure Triggered"
