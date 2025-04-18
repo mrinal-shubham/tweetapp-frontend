@@ -101,7 +101,7 @@ jobs:
 
   post-action-success:
     needs: [build, docker-build-push,qa-approval,deploy]
-    if: ${{success() && always()}}
+    if: ${{always() && !failure() && !cancelled()}}
     runs-on: ubuntu-latest
     steps:
       - name: Print Value
