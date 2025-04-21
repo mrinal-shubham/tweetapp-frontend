@@ -126,7 +126,7 @@ jobs:
           echo "QA Approval"
 
   deploy-to-prod:
-    if: ${{inputs.environment == 'prod' }}
+    if: ${{ inputs.environment == 'prod' }}
     needs: [prod-approval]
     runs-on: ubuntu-latest
     steps:
