@@ -32,11 +32,6 @@ env:
   BUILD_NUMBER: "${{ github.run_number }}"
   NOTIFICATIONS_EMAIL_RECIPIENT: "mrial_subchangeptum.com"
   NPM_REGISTRY: "${{ vars.NPM_REGISTRY }}"
-  envVarMap:
-  dev: "np"
-  tst: "np"
-  stg: "prod"
-  prd: "prod"
 
 jobs:
   build:
@@ -73,14 +68,14 @@ jobs:
           echo "Value: ${FROM_ENV}"
 
   docker-build-push:
-    needs: build
+    needs: [build]
     if: ${{ inputs.promoteToTst || inputs.promoteToStg }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
   qa-approval:
-    if: ${{(inputs.promoteToTst || inputs.environment == 'tst') && always() }}
+    if: ${{(inputs.promoteToTst || inputs.environment == 'tst') && !failure() && !cancelled() && always() }}
     needs: [build, docker-build-push]
     runs-on: ubuntu-latest
     environment:
@@ -90,7 +85,7 @@ jobs:
         run: |
           echo "QA Approval"
 
-  deploy:
+  deploy-to-tst:
     if: ${{ (inputs.promoteToTst || inputs.environment == 'tst') && always() }}
     needs: [qa-approval]
     runs-on: ubuntu-latest
@@ -99,37 +94,41 @@ jobs:
         run: |
           echo "Deploying ${{ env.appName }} to ${{ inputs.environment }}"
 
-  # post-action-success:
-  #   needs: [build, docker-build-push,qa-approval,deploy]
-  #   if: ${{always() && !failure() && !cancelled()}}
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Print Value
-  #       run: |
-  #         echo "Success Triggered"
+  stg-approval:
+    if: ${{(inputs.promoteToTst || inputs.environment == 'stg') && !failure() && !cancelled() && always() }}
+    needs: [build, deploy-to-tst]
+    runs-on: ubuntu-latest
+    environment:
+      name: STG
+    steps:
+      - name: Wait for QA approval
+        run: |
+          echo "QA Approval"
 
-  # post-action-failure:
-  #   needs: [build, docker-build-push,qa-approval,deploy]
-  #   if: ${{(failure() || cancelled()) && always()}}
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Print Value
-  #       run: |
-  #         echo "Failure Triggered"
-
-  post-action:
-    needs: [build, docker-build-push, qa-approval, deploy]
-    if: always()
+  deploy-to-stg:
+    if: ${{ (inputs.promoteToStg || inputs.environment == 'stg') && always() }}
+    needs: [stg-approval]
     runs-on: ubuntu-latest
     steps:
-      - name: Success handler
-        if: ${{ !failure() && !cancelled() }}
+      - name: Deploy to ${{ inputs.environment }}
         run: |
-          echo "All jobs completed successfully"
-          # Add success actions here
+          echo "Deploying ${{ env.appName }} to ${{ inputs.environment }}"
 
-      - name: Failure handler
-        if: ${{ failure() || cancelled() }}
+  post-action-success:
+    needs: [build, docker-build-push,qa-approval,deploy-to-tst, stg-approval,  deploy-to-stg]
+    if: ${{always() && !failure() && !cancelled()}}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Value
         run: |
-          echo "Pipeline failed"
-          # Add failure actions here
+          echo "Success Triggered"
+
+  post-action-failure:
+    needs: [build, docker-build-push,qa-approval,deploy-to-tst]
+    if: ${{(failure() || cancelled()) && always()}}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Value
+        run: |
+          echo "Failure Triggered"
+
