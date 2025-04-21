@@ -75,7 +75,7 @@ jobs:
       - uses: actions/checkout@v4
 
   qa-approval:
-    if: ${{(inputs.promoteToTst || inputs.environment == 'tst') && !failure() && !cancelled() && always() }}
+    if: ${{(inputs.promoteToTst || inputs.environment == 'tst') && !failure() && !cancelled() }}
     needs: [build, docker-build-push]
     runs-on: ubuntu-latest
     environment:
@@ -95,7 +95,7 @@ jobs:
           echo "Deploying ${{ env.appName }} to ${{ inputs.environment }}"
 
   stg-approval:
-    if: ${{(inputs.promoteToTst || inputs.environment == 'stg') && !failure() && !cancelled() && always() }}
+    if: ${{(inputs.promoteToTst || inputs.environment == 'stg') && !failure() && !cancelled() }}
     needs: [build, deploy-to-tst]
     runs-on: ubuntu-latest
     environment:
@@ -115,7 +115,7 @@ jobs:
           echo "Deploying ${{ env.appName }} to ${{ inputs.environment }}"
 
   prod-approval:
-    if: ${{ inputs.environment == 'prod' && !failure() && !cancelled() && always() }}
+    if: ${{ inputs.environment == 'prod' && !failure() && !cancelled() }}
     needs: [build, deploy-to-stg]
     runs-on: ubuntu-latest
     environment:
