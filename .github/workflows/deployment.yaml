@@ -69,7 +69,7 @@ jobs:
 
   docker-build-push:
     needs: [build]
-    if: ${{ inputs.promoteToTst || inputs.promoteToStg }}
+    if: ${{  inputs.environment == 'dev' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -86,7 +86,7 @@ jobs:
           echo "QA Approval"
 
   deploy-to-tst:
-    if: ${{ (inputs.promoteToTst || inputs.environment == 'tst') && always() }}
+    if: ${{ (inputs.promoteToTst || inputs.environment == 'tst') && !failure() && !cancelled() }}
     needs: [qa-approval]
     runs-on: ubuntu-latest
     steps:
@@ -106,7 +106,7 @@ jobs:
           echo "QA Approval"
 
   deploy-to-stg:
-    if: ${{ (inputs.promoteToStg || inputs.environment == 'stg') && always() }}
+    if: ${{ (inputs.promoteToStg || inputs.environment == 'stg') && !failure() && !cancelled() }}
     needs: [stg-approval]
     runs-on: ubuntu-latest
     steps:
@@ -126,7 +126,7 @@ jobs:
           echo "QA Approval"
 
   deploy-to-prod:
-    if: ${{ inputs.environment == 'prod' }}
+    if: ${{ inputs.environment == 'prod' && !failure() && !cancelled() }}
     needs: [prod-approval]
     runs-on: ubuntu-latest
     steps:
