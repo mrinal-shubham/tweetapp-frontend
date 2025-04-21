@@ -114,8 +114,28 @@ jobs:
         run: |
           echo "Deploying ${{ env.appName }} to ${{ inputs.environment }}"
 
+  prod-approval:
+    if: ${{ inputs.environment == 'prod' && !failure() && !cancelled() && always() }}
+    needs: [build, deploy-to-stg]
+    runs-on: ubuntu-latest
+    environment:
+      name: PROD
+    steps:
+      - name: Wait for QA approval
+        run: |
+          echo "QA Approval"
+
+  deploy-to-prod:
+    if: ${{inputs.environment == 'prod' }}
+    needs: [prod-approval]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to ${{ inputs.environment }}
+        run: |
+          echo "Deploying ${{ env.appName }} to ${{ inputs.environment }}"
+
   post-action-success:
-    needs: [build, docker-build-push,qa-approval,deploy-to-tst, stg-approval,  deploy-to-stg]
+    needs: [build, docker-build-push,qa-approval,deploy-to-tst, stg-approval,  deploy-to-stg, prod-approval, deploy-to-prod]
     if: ${{always() && !failure() && !cancelled()}}
     runs-on: ubuntu-latest
     steps:
@@ -124,7 +144,7 @@ jobs:
           echo "Success Triggered"
 
   post-action-failure:
-    needs: [build, docker-build-push,qa-approval,deploy-to-tst]
+    needs: [build, docker-build-push,qa-approval,deploy-to-tst, stg-approval,  deploy-to-stg, prod-approval, deploy-to-prod]
     if: ${{(failure() || cancelled()) && always()}}
     runs-on: ubuntu-latest
     steps:
